@@ -41,7 +41,7 @@ class LLMUserSimulationEnv(BaseUserSimulationEnv):
         self.model = model
         self.provider = provider
         self.total_cost = 0.0
-        self.reset()
+        # self.reset()
 
     def generate_next_message(self, messages: List[Dict[str, Any]]) -> str:
         res = completion(

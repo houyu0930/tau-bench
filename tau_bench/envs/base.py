@@ -87,14 +87,15 @@ class Env(object):
             observation=initial_observation, info=EnvInfo(task=self.task, source="user")
         )
 
-    def step(self, action: Action) -> EnvResponse:
+    def step(self, action: Action, mid=0, messages=[]) -> EnvResponse:
         self.actions.append(action)
 
         info = EnvInfo(task=self.task)
         reward = 0
         done = False
         if action.name == RESPOND_ACTION_NAME:
-            observation = self.user.step(action.kwargs["content"])
+            # observation = self.user.step(action.kwargs["content"])
+            observation = messages[mid + 1]['content']
             info.source = "user"
             done = "###STOP###" in observation
         elif action.name in self.tools_map:
@@ -147,7 +148,7 @@ class Env(object):
                     r_outputs = 0.0
                     reward = 0.0
             info = RewardOutputInfo(r_outputs=r_outputs, outputs=outputs)
-        else:
+        if len(self.task.outputs) <= 0 or reward == 1.0:
             # check database change
             # TODO: cache gt_data_hash in tasks.py (low priority)
             self.data = self.data_load_func()
